@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Image MB to KB Converter</title>
+  <style>
+    :root {
+      --bg: #f3f4f6;
+      --text: #1f2937;
+      --card: #ffffff;
+      --primary: #3b82f6;
+      --accent: #6366f1;
+    }
+    * {
+      box-sizing: border-box;
+      transition: 0.3s;
+    }
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+    header {
+      background: var(--card);
+      padding: 12px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    header img {
+      height: 40px;
+    }
+    .whatsapp-icon {
+      width: 36px;
+      cursor: pointer;
+    }
+    .container {
+      max-width: 600px;
+      margin: 40px auto;
+      background: var(--card);
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+      text-align: center;
+    }
+    h2 {
+      font-size: 24px;
+      margin-bottom: 20px;
+    }
+    .dropzone {
+      border: 2px dashed var(--primary);
+      border-radius: 12px;
+      padding: 30px;
+      background: #eff6ff;
+      cursor: pointer;
+    }
+    .dropzone:hover {
+      background: #dbeafe;
+    }
+    input[type="number"] {
+      margin-top: 20px;
+      padding: 10px;
+      width: 80%;
+      max-width: 250px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+    .download-btn {
+      background: linear-gradient(to right, var(--primary), var(--accent));
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 10px;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+    .download-btn:hover {
+      opacity: 0.9;
+    }
+    .preview {
+      margin-top: 20px;
+      max-width: 100%;
+      border-radius: 12px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+      display: none;
+    }
+    .progress {
+      margin-top: 20px;
+      height: 12px;
+      background: #e5e7eb;
+      border-radius: 6px;
+      overflow: hidden;
+      display: none;
+    }
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: var(--primary);
+    }
+    .loader {
+      margin-top: 20px;
+      display: none;
+    }
+    .loader:after {
+      content: "Loading...";
+      display: inline-block;
+      color: var(--primary);
+      font-weight: bold;
+      animation: blink 1s infinite;
+    }
+    @keyframes blink {
+      50% { opacity: 0.3; }
+    }
+    footer {
+      background: #e5e7eb;
+      padding: 50px 20px;
+      text-align: center;
+      margin-top: 40px;
+    }
+    .social-icons {
+      margin-top: 16px;
+    }
+    .social-icons img {
+      width: 36px;
+      margin: 0 12px;
+      vertical-align: middle;
+    }
+    .floating-icons {
+      position: fixed;
+      right: 15px;
+      bottom: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      z-index: 999;
+    }
+    .floating-icons img {
+      width: 45px;
+      border-radius: 50%;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    }
+  </style>
+</head>
+<body>
+  <!-- Popup -->
+  <div id="popup" style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;z-index:999;">
+    <img src="mp.jpg" alt="Popup Logo" style="width:120px;border-radius:16px;">
+  </div>
+
+  <!-- Header -->
+  <header>
+    <img src="mpde.png" alt="Navbar Logo">
+    <a href="https://wa.me/916356952788?text=Hello!%20I%20visited%20your%20Image%20Converter%20website%20and%20need%20help." target="_blank">
+      <img src="https://cdn-icons-png.flaticon.com/512/733/733641.png" alt="WhatsApp" class="whatsapp-icon">
+    </a>
+  </header>
+
+  <!-- Main Section -->
+  <div class="container">
+    <h2>Image MB to KB Converter</h2>
+    <div class="dropzone" onclick="fileInput.click()" ondragover="event.preventDefault()" ondrop="handleDrop(event)">
+      Click to Upload Image
+    </div>
+    <input type="file" id="fileInput" accept="image/*" hidden onchange="handleFile(this.files[0])">
+    <input type="number" id="targetKB" placeholder="Target size in KB (e.g., 100)">
+    <img id="preview" class="preview" />
+    <button class="download-btn" onclick="compressImage()">Download Compressed Image</button>
+    <div class="loader" id="loader"></div>
+    <div class="progress"><div class="progress-bar" id="progressBar"></div></div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <p>© 2025 Image Converter | All Rights Reserved</p>
+    <div class="social-icons">
+      <a href="https://www.instagram.com/mahipat_suthar_09?igsh=aGJjMW04cW10MDA4" target="_blank">
+        <img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png" alt="Instagram">
+      </a>
+      <a href="https://youtube.com/@mahipatsuthar-e3h?si=jD6g0TfZSAw_TQ7e" target="_blank">
+        <img src="https://cdn-icons-png.flaticon.com/512/3670/3670151.png" alt="YouTube">
+      </a>
+      <a href="https://x.com/mahipat_suthar_?t=JGamVHtF1Ld7EYNmj61UpA&s=09" target="_blank">
+        <img src="https://cdn-icons-png.flaticon.com/512/733/733635.png" alt="Twitter">
+      </a>
+    </div>
+  </footer>
+
+
+
+  <!-- JavaScript -->
+  <script>
+    let uploadedImage = null;
+    const preview = document.getElementById("preview");
+    const progressBar = document.getElementById("progressBar");
+    const loader = document.getElementById("loader");
+
+    // Hide popup on load
+    window.onload = () => {
+      setTimeout(() => {
+        document.getElementById("popup").style.display = "none";
+      }, 1500);
+    };
+
+    function handleDrop(e) {
+      e.preventDefault();
+      handleFile(e.dataTransfer.files[0]);
+    }
+
+    function handleFile(file) {
+      if (!file.type.startsWith("image/")) {
+        alert("Only image files allowed!");
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        uploadedImage = e.target.result;
+        preview.src = uploadedImage;
+        preview.style.display = "block";
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function compressImage() {
+      const targetKB = parseInt(document.getElementById("targetKB").value);
+      if (!uploadedImage || !targetKB) {
+        alert("Please upload image and enter target size.");
+        return;
+      }
+
+      const img = new Image();
+      img.src = uploadedImage;
+      loader.style.display = "block";
+      document.querySelector(".progress").style.display = "block";
+
+      img.onload = function () {
+        const canvas = document.createElement("canvas");
+        canvas.width = img.width;
+        canvas.height = img.height;
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0);
+
+        let quality = 0.9;
+
+        function step() {
+          const dataUrl = canvas.toDataURL("image/jpeg", quality);
+          const sizeKB = Math.round((dataUrl.length * 3 / 4) / 1024);
+          progressBar.style.width = `${(1 - quality) * 100}%`;
+
+          if (sizeKB <= targetKB || quality < 0.1) {
+            const a = document.createElement("a");
+            a.href = dataUrl;
+            a.download = "compressed.jpg";
+            a.click();
+            progressBar.style.width = "0%";
+            loader.style.display = "none";
+            document.querySelector(".progress").style.display = "none";
+          } else {
+            quality -= 0.05;
+            setTimeout(step, 100);
+          }
+        }
+
+        step();
+      };
+    }
+  </script>
+</body>
+</html>
